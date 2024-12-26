@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid()) @map("id")
+  name      String   @map("name")
+  username  String   @map("username")
+  phone     String?  @map("phone")
+  image     String?  @map("image")
+  cover     String?  @map("cover")
+  cpf       String?  @unique @map("cpf")
+  email     String   @unique @map("email")
+  password  String   @map("password")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Category {
+  id      String   @id @default(uuid()) @map("id")
+  name    String   @map("name")
+  markets Market[]
+
+  @@map("categories")
+}
+
+model Rules {
+  id          String @id @default(uuid()) @map("id")
+  description String @map("description")
+  marketId    String @map("market_id")
+  market      Market @relation(fields: [marketId], references: [id])
+
+  @@map("rules")
+}
+
+model Market {
+  id          String   @id @default(uuid()) @map("id")
+  name        String   @map("name")
+  description String   @map("description")
+  coupons     Int      @map("coupons")
+  latitude    Float    @map("latitude")
+  longitude   Float    @map("longitude")
+  address     String   @map("address")
+  phone       String   @map("phone")
+  cover       String   @map("cover")
+  categoryId  String   @map("category_id")
+  category    Category @relation(fields: [categoryId], references: [id])
+  rules       Rules[]
+
+  @@map("markets")
+}
